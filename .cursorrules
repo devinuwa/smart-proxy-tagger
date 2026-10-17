@@ -5,8 +5,8 @@ These rules apply to every file in this repository. Hackathon judges should be a
 ## Stack
 
 - The frontend lives in `/frontend` and is built with Vite, React, TypeScript, and Tailwind CSS. Do not add a second UI framework, a CSS-in-JS library, or a non-Vite bundler.
-- The API is Python FastAPI. The entrypoint is `server.py`.
-- Video and model work runs inside Temporal activities, called from `workflow.py`. The FastAPI request handlers start workflows and answer queries. They do not extract frames, run PaliGemma, or write embeddings.
+- The API is Python FastAPI. The entrypoint is `backend/server.py`.
+- Video and model work runs inside Temporal activities, called from `backend/workflow.py`. The FastAPI request handlers start workflows and answer queries. They do not extract frames, run PaliGemma, or write embeddings.
 - The search store is TimescaleDB with pgvector, running on localhost. The connection string host must be loopback (`localhost` or `127.0.0.1`). Do not add a client for a hosted database, Tiger Cloud, MongoDB Atlas, or any other remote datastore.
 - PaliGemma and the text embedding model load on this machine. Do not send frames or captions to a hosted vision or embedding API.
 - ElevenLabs is the only outbound media API, and it is used for the completion voice notification.

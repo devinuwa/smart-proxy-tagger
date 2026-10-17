@@ -10,7 +10,7 @@ This document is the contract for the code that follows. Phases 2–4 implement 
 
 ```mermaid
 flowchart LR
-  UI["Vite React UI"] -->|"fetch"| API["FastAPI server.py"]
+  UI["Vite React UI"] -->|"fetch"| API["FastAPI backend/server.py"]
   API -->|"start or query"| Temporal["Temporal workflow"]
   Temporal --> Frames["Frame extract activity"]
   Frames --> Gemma["PaliGemma caption activity"]
@@ -98,7 +98,7 @@ The notify activity sends one sentence to the ElevenLabs text-to-speech API and 
 
 ## Phase 2 status
 
-The backend is in place. Captions are still a local stand-in (`phase2-stand-in` in `captions.py`): the file name and timestamp, written so search and the workflow can be reviewed before PaliGemma weights are loaded. Phase 4 replaces `caption_frame` and `embed_text`. The embedding width is already 384. Rows created by the stand-in must be re-embedded then, because a token hash is not the MiniLM space.
+The Python modules live in `backend/`. Captions are still a local stand-in (`phase2-stand-in` in `backend/captions.py`): the file name and timestamp, written so search and the workflow can be reviewed before PaliGemma weights are loaded. Phase 4 replaces `caption_frame` and `embed_text`. The embedding width is already 384. Rows created by the stand-in must be re-embedded then, because a token hash is not the MiniLM space.
 
 `ffmpeg` is optional. When it is missing, extract still records three timestamps per file and marks them `timestamp-sample`. It does not pretend those rows came from decoded pictures.
 
@@ -109,8 +109,8 @@ docker compose up -d
 py -3.11 -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 copy .env.example .env
-.venv\Scripts\python worker.py
-.venv\Scripts\python -m uvicorn server:app --host 127.0.0.1 --port 8000
+.venv\Scripts\python -m backend.worker
+.venv\Scripts\python -m uvicorn backend.server:app --host 127.0.0.1 --port 8000
 ```
 
 On this machine Python 3.13 has no `venv` module, so the environment is Python 3.11. TimescaleDB is published on `127.0.0.1:15432` because ports 5432 and 5433 were already in use. Temporal is on `localhost:7233`.

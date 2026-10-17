@@ -59,7 +59,8 @@ def _timestamp_samples(video_path: Path) -> list[dict]:
 
 
 def _ffmpeg_samples(ffmpeg: str, video_path: Path, workflow_id: str) -> list[dict]:
-    out_dir = Path("var") / "frames" / workflow_id / _safe_stem(video_path)
+    # var/ lives at the repository root, not inside this package.
+    out_dir = Path(__file__).resolve().parents[1] / "var" / "frames" / workflow_id / _safe_stem(video_path)
     out_dir.mkdir(parents=True, exist_ok=True)
     pattern = str(out_dir / "frame_%03d.jpg")
     # fps=1/5 keeps the demo sparse. -frames:v caps a long file.

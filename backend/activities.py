@@ -14,11 +14,11 @@ from pathlib import Path
 from temporalio import activity
 from temporalio.exceptions import ApplicationError
 
-import db
-from captions import CAPTION_MODEL, caption_frame
-from embeddings import embed_text
-from frames import extract_frames, list_videos
-from notify_voice import VoiceError, synthesize_and_play
+from . import db
+from .captions import CAPTION_MODEL, caption_frame
+from .embeddings import embed_text
+from .frames import extract_frames, list_videos
+from .notify_voice import VoiceError, synthesize_and_play
 
 
 @activity.defn(name="discover_videos")

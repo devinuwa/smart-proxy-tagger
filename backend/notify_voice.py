@@ -6,7 +6,7 @@ from the environment. A missing key is a clear error, not a baked-in fallback.
 
 Run directly to hear a line without a workflow:
 
-    python notify_voice.py "Your footage is indexed."
+    python -m backend.notify_voice "Your footage is indexed."
 """
 
 from __future__ import annotations
@@ -32,14 +32,14 @@ class VoiceError(RuntimeError):
 
 def synthesize_and_play(text: str, workflow_id: str) -> dict:
     """Write an mp3 under var/voice and play it on this machine."""
-    load_dotenv()
+    load_dotenv(Path(__file__).resolve().parents[1] / ".env")
     key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     if not key:
         raise VoiceError("ELEVENLABS_API_KEY is not set. Add it to .env and retry the notification.")
 
     voice_id = os.environ.get("ELEVENLABS_VOICE_ID", DEFAULT_VOICE_ID).strip() or DEFAULT_VOICE_ID
     audio = _synthesize(text, voice_id, key)
-    out_dir = Path("var") / "voice"
+    out_dir = Path(__file__).resolve().parents[1] / "var" / "voice"
     out_dir.mkdir(parents=True, exist_ok=True)
     # The workflow id is our own handle, not a client secret.
     safe_id = "".join(char if char.isalnum() or char in {"-", "_"} else "_" for char in workflow_id)

@@ -20,14 +20,15 @@ from pydantic import BaseModel, Field
 from temporalio.client import Client
 from temporalio.service import RPCError
 
-import db
-from embeddings import embed_text
-from workflow import TASK_QUEUE, IndexFootageWorkflow
+from . import db
+from .embeddings import embed_text
+from .workflow import TASK_QUEUE, IndexFootageWorkflow
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-load_dotenv()
+# .env stays at the repository root, beside this package.
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 
 class JobRequest(BaseModel):

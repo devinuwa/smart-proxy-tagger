@@ -46,8 +46,8 @@ Python worker and API:
 py -3.11 -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 copy .env.example .env
-.venv\Scripts\python worker.py
-.venv\Scripts\python -m uvicorn server:app --host 127.0.0.1 --port 8000
+.venv\Scripts\python -m backend.worker
+.venv\Scripts\python -m uvicorn backend.server:app --host 127.0.0.1 --port 8000
 ```
 
 Leave the worker and the API running. In a third terminal:
