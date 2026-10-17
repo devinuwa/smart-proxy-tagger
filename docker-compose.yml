@@ -1,0 +1,38 @@
+# Local-only services. Ports are bound to 127.0.0.1 so footage metadata
+# never listens on the network. Temporal uses its own dev database file;
+# searchable footage lives in TimescaleDB, Tiger Data's Postgres engine.
+
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg16
+    environment:
+      POSTGRES_USER: smartproxy
+      POSTGRES_PASSWORD: smartproxy
+      POSTGRES_DB: smartproxy
+    ports:
+      # 5432 and 5433 are already taken by other local Postgres processes.
+      # Timescale stays on loopback, published as 15432.
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - timescale-data:/home/postgres/pgdata
+
+  temporal:
+    image: temporalio/admin-tools:latest
+    entrypoint: ["temporal"]
+    command:
+      - server
+      - start-dev
+      - --ip
+      - 0.0.0.0
+      - --port
+      - "7233"
+      - --ui-port
+      - "8233"
+      - --db-filename
+      - /tmp/temporal.db
+    ports:
+      - "127.0.0.1:7233:7233"
+      - "127.0.0.1:8233:8233"
+
+volumes:
+  timescale-data:

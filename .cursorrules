@@ -1,0 +1,39 @@
+# Smart Proxy Tagger — project guardrails
+
+These rules apply to every file in this repository. Hackathon judges should be able to see, from the code and the comments, why each piece exists.
+
+## Stack
+
+- The frontend lives in `/frontend` and is built with Vite, React, TypeScript, and Tailwind CSS. Do not add a second UI framework, a CSS-in-JS library, or a non-Vite bundler.
+- The API is Python FastAPI. The entrypoint is `server.py`.
+- Video and model work runs inside Temporal activities, called from `workflow.py`. The FastAPI request handlers start workflows and answer queries. They do not extract frames, run PaliGemma, or write embeddings.
+- The search store is TimescaleDB with pgvector, running on localhost. The connection string host must be loopback (`localhost` or `127.0.0.1`). Do not add a client for a hosted database, Tiger Cloud, MongoDB Atlas, or any other remote datastore.
+- PaliGemma and the text embedding model load on this machine. Do not send frames or captions to a hosted vision or embedding API.
+- ElevenLabs is the only outbound media API, and it is used for the completion voice notification.
+
+## Secrets
+
+- API keys and database passwords live in `.env` at the repository root.
+- Commit `.env.example` with variable names and empty or local-only placeholder values. Never commit `.env`.
+- Do not log, print, or paste secret values into source, docs, comments, tests, or commit messages.
+- `ELEVENLABS_API_KEY` is read from the environment inside the notify activity. A missing key fails that activity with a clear error. It does not fall back to a key buried in source.
+
+## Workflow and durability
+
+- Indexing is non-blocking. `POST /api/jobs` returns a workflow id.
+- The caption step is one long-running activity that heartbeats a cursor (file path and frame index) and resumes from that cursor on retry.
+- Do not create one Temporal activity invocation per frame. That inflates workflow history.
+- The UI polls workflow status. Closing the browser must not be required to cancel or to finish a running worker.
+
+## Code shape
+
+- Keep modules small: HTTP routes, Temporal workflow, activities, database access, frame extraction, captioning, embeddings, and voice notification each have their own file once implementation starts.
+- Comment the why. A comment should tell a judge which bounty or product constraint the block serves (local footage, resume after crash, Gemma caption, pgvector row, ElevenLabs sentence). Do not comment obvious syntax.
+- Prefer clear names over clever ones. Match the vocabulary in `docs/ARCHITECTURE.md`.
+- New work only. This repository is a Hacktoberfest Week 2 submission and must be built inside the challenge window. If a snippet is adapted from elsewhere, credit the source next to the code and in the submission post.
+- Do not invent a second architecture. If a change contradicts `docs/ARCHITECTURE.md` or `docs/HACKATHON_BOUNTIES.md`, update those docs in the same change.
+
+## Demo honesty
+
+- The judging demo uses a short clip and sparse frame sampling. Document the sample interval next to the constant that sets it.
+- Do not describe the demo clip as a multi-terabyte run. The product story and the demo measurement stay distinct.

@@ -1,0 +1,30 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Local models, extracted frames, and generated voice clips
+var/
+models/
+*.gguf
+*.bin
+*.safetensors
+*.mp3
+*.wav
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+node_modules/
+
+# OS and editor
+.DS_Store
+Thumbs.db
